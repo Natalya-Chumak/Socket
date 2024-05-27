@@ -62,13 +62,17 @@ import socket
 import threading
 
 
-def listen_client_messages(connection):
-    pass
+def listen_client_messages(connection: socket.socket):
+    user_name = connection.recv(1024)
+    while True:
+        client_message = connection.recv(1024)
+        print(f'{user_name}: {client_message.decode()}')
+
 
 
 server = socket.socket()
 hostname = '10.39.160.69'     # socket.gethostname() 'localhost' '127.0.0.1'
-port = 12345                        #65535
+port = 12346                        #65535
 server.bind((hostname, port))
 
 server.listen(5)
@@ -84,17 +88,19 @@ while True:
     print(connection)
     print(adress)
     all_clients.add(connection)
+    threading.Thread(target=listen_client_messages, args=(connection, )).start()
 
 
 
 
 
-
-    server_message = input('Сообщение клиенту: ')
-    if server_message == 'q':
-        connection.send('подключение закрывается. до свидания'.encode())
-        connection.close()
-        break
-    connection.send('hi, new client. Привет, клиент'.encode()) #превращаем в байт-строку
-    user_message = connection.recv(1024)
-    print(user_message.decode())
+    #
+    #
+    # server_message = input('Сообщение клиенту: ')
+    # if server_message == 'q':
+    #     connection.send('подключение закрывается. до свидания'.encode())
+    #     connection.close()
+    #     break
+    # connection.send('hi, new client. Привет, клиент'.encode()) #превращаем в байт-строку
+    # user_message = connection.recv(1024)
+    # print(user_message.decode())
